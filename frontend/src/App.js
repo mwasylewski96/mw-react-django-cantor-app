@@ -1,58 +1,117 @@
 // src/App.js
 import React, { Component } from "react";
+import { Toaster } from 'sonner';
 import { createActor } from "xstate";
-import { navigationMachine } from "./state_machines/navigation";
+import { cantorMachine } from "./state_machines/cantorMachine";
+import { languageMachine } from "./state_machines/languageMachine";
 
-import Page1 from "./pages/Page1";
-import Page2 from "./pages/Page2";
-import Page3 from "./pages/Page3";
-import Page4 from "./pages/Page4";
-import Page5 from "./pages/Page5";
-import Page6 from "./pages/Page6";
+import Navbar from "./components/navbar";
+
+import WelcomePage from "./pages/welcomePage";
+import ExchangeCurrencyPage from "./pages/exchangeCurrencyPage";
+import ExchangeCalculatorPage from "./pages/exchangeCalculatorPage";
+import SummaryChoicePage from "./pages/summaryChoicePage";
+import PaymentPage from "./pages/paymentPage";
+import EndPage from "./pages/endPage";
 
 class App extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      currentScreen: "screen1",
+      currentPage: "welcomePage",
+      currentLanguage: "pl",
     };
 
-    this.actor = createActor(navigationMachine);
+    this.actorPage = createActor(cantorMachine);
+    this.actorLanguage = createActor(languageMachine);
 
-    this.actor.subscribe((snapshot) => {
-      const newScreen = snapshot.value;
-      if (newScreen !== this.state.currentScreen) {
-        this.setState({ currentScreen: newScreen });
+    this.pageSubscription = this.actorPage.subscribe((snapshot) => {
+      const newPage = snapshot.value;
+      if (newPage !== this.state.currentPage) {
+        this.setState({ currentPage: newPage });
       }
     });
 
-    this.actor.start();
+    this.languageSubscription = this.actorLanguage.subscribe((snapshot) => {
+      const newLanguage = snapshot.value;
+      if (newLanguage !== this.state.currentLanguage) {
+        this.setState({ currentLanguage: newLanguage });
+      }
+    });
+
+    this.actorPage.start();
+    this.actorLanguage.start();
   }
 
+  componentWillUnmount() {
+    this.actorPage?.stop?.();
+    this.actorLanguage?.stop?.();
+    this.pageSubscription?.unsubscribe?.();
+    this.languageSubscription?.unsubscribe?.();
+}
+
+
   send = (event) => {
-    this.actor.send({ type: event });
+    this.actorPage.send({ type: event });
   };
 
-  renderScreen() {
-    const { currentScreen } = this.state;
+  sendLanguage = (event) => {
+    this.actorLanguage.send({ type: event });
+  };
 
-    const screens = {
-      screen1: <Page1 send={this.send} />,
-      screen2: <Page2 send={this.send} />,
-      screen3: <Page3 send={this.send} />,
-      screen4: <Page4 send={this.send} />,
-      screen5: <Page5 send={this.send} />,
-      screen6: <Page6 send={this.send} />,
+  renderNavbar() {
+    const { currentLanguage } = this.state;
+    return (
+      <Navbar
+        send={this.sendLanguage}
+        currentLanguage={currentLanguage}
+      />
+    );
+  }
+
+  renderScreen() {
+    const { currentPage, currentLanguage } = this.state;
+
+    const pages = {
+      welcomePage: (
+        <WelcomePage send={this.send} currentLanguage={currentLanguage} />
+      ),
+      exchangeCurrencyPage: (
+        <ExchangeCurrencyPage send={this.send} currentLanguage={currentLanguage} />
+      ),
+      exchangeCalculatorPage: (
+        <ExchangeCalculatorPage send={this.send} currentLanguage={currentLanguage} />
+      ),
+      summaryChoicePage: (
+        <SummaryChoicePage send={this.send} currentLanguage={currentLanguage} />
+      ),
+      paymentPage: (
+        <PaymentPage send={this.send} currentLanguage={currentLanguage} />
+      ),
+      endPage: (
+        <EndPage send={this.send} currentLanguage={currentLanguage} />
+      ),
     };
 
-    return screens[currentScreen] || <Page1 send={this.send} />;
+    return pages[currentPage] || (
+      <WelcomePage send={this.send} currentLanguage={currentLanguage} />
+    );
   }
 
   render() {
     return (
       <div style={{ textAlign: "center", marginTop: 40 }}>
-        <h2>Aplikacja 6 ekranów z XState 5 (bez hooków)</h2>
+        <Toaster
+        richColors
+        position="top-center"
+        reverseOrder = {false}
+        toastOptions={{
+          className: 'my-toast-style',
+          duration: 3500
+        }}
+      />
+        {this.renderNavbar()}
         {this.renderScreen()}
       </div>
     );
