@@ -20,20 +20,13 @@ import {
 class ExchangeCurrencyPage extends Component {
   constructor(props) {
     super(props);
+
+    const { context } = props;
     this.state = {
-      action: "buy",
-      amount: "",
-      fromCurrency: "PLN",
-      toCurrency: "USD",
-      // 🔹 Tylko 6 par z silniejszą walutą po lewej stronie
-      rates: [
-        { pair: "USD/PLN", buy: 4.12, sell: 4.18 },
-        { pair: "EUR/PLN", buy: 4.36, sell: 4.42 },
-        { pair: "CHF/PLN", buy: 4.59, sell: 4.65 },
-        { pair: "EUR/USD", buy: 1.06, sell: 1.08 },
-        { pair: "EUR/CHF", buy: 0.96, sell: 0.98 },
-        { pair: "CHF/USD", buy: 1.09, sell: 1.11 },
-      ],
+      action: context.action || "buy",
+      amount: context.amount || "",
+      fromCurrency: context.fromCurrency || "PLN",
+      toCurrency: context.toCurrency || "USD",
     };
   }
 
@@ -48,8 +41,8 @@ class ExchangeCurrencyPage extends Component {
   };
 
   render() {
-    const { action, amount, fromCurrency, toCurrency, rates } = this.state;
-    const { currentLanguage } = this.props;
+    const { action, amount, fromCurrency, toCurrency } = this.state;
+    const { currentLanguage, context } = this.props;
 
     const texts = {
       pl: {
@@ -90,9 +83,16 @@ class ExchangeCurrencyPage extends Component {
     const currencies = ["PLN", "USD", "EUR", "CHF"];
 
     const exchangeText =
-      action === "buy"
-        ? `${t.andExchange} ${t.from}`
-        : `${t.andExchange} ${t.to}`;
+      action === "buy" ? `${t.andExchange} ${t.from}` : `${t.andExchange} ${t.to}`;
+
+    const rates = context.rates || [
+      { pair: "USD/PLN", buy: 4.12, sell: 4.18 },
+      { pair: "EUR/PLN", buy: 4.36, sell: 4.42 },
+      { pair: "CHF/PLN", buy: 4.59, sell: 4.65 },
+      { pair: "EUR/USD", buy: 1.06, sell: 1.08 },
+      { pair: "EUR/CHF", buy: 0.96, sell: 0.98 },
+      { pair: "CHF/USD", buy: 1.09, sell: 1.11 },
+    ];
 
     return (
       <MainBox>
@@ -109,7 +109,6 @@ class ExchangeCurrencyPage extends Component {
                 {t.title}
               </Typography>
 
-              {/* Formularz wyboru */}
               <Box display="flex" flexDirection="column" gap={2} width="100%">
                 <Typography variant="body1" fontWeight="500">
                   {t.want}
@@ -177,7 +176,6 @@ class ExchangeCurrencyPage extends Component {
                 </Button>
               </Box>
 
-              {/* 🔹 Tabela kursów */}
               <Box mt={1} width="100%">
                 <Typography variant="h6" gutterBottom>
                   {t.ratesTitle}
@@ -201,12 +199,8 @@ class ExchangeCurrencyPage extends Component {
                       {rates.map((row) => (
                         <TableRow key={row.pair}>
                           <TableCell>{row.pair}</TableCell>
-                          <TableCell align="right">
-                            {row.buy.toFixed(2)}
-                          </TableCell>
-                          <TableCell align="right">
-                            {row.sell.toFixed(2)}
-                          </TableCell>
+                          <TableCell align="right">{row.buy.toFixed(2)}</TableCell>
+                          <TableCell align="right">{row.sell.toFixed(2)}</TableCell>
                         </TableRow>
                       ))}
                     </TableBody>

@@ -1,6 +1,5 @@
-// src/App.js
 import React, { Component } from "react";
-import { Toaster } from 'sonner';
+import { Toaster } from "sonner";
 import { createActor } from "xstate";
 import { cantorMachine } from "./state_machines/cantorMachine";
 import { languageMachine } from "./state_machines/languageMachine";
@@ -18,19 +17,30 @@ class App extends Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      currentPage: "welcomePage",
-      currentLanguage: "pl",
-    };
-
+  
     this.actorPage = createActor(cantorMachine);
     this.actorLanguage = createActor(languageMachine);
 
+    // Ustawiamy początkowy stan z snapshotów maszyn
+    const pageSnapshot = this.actorPage.getSnapshot();
+    const langSnapshot = this.actorLanguage.getSnapshot();
+
+    this.state = {
+      currentPage: pageSnapshot.value,
+      currentLanguage: langSnapshot.value,
+      context: pageSnapshot.context,
+    };
+  }
+
+  componentDidMount() {
     this.pageSubscription = this.actorPage.subscribe((snapshot) => {
-      console.log(snapshot.context)
-      const newPage = snapshot.value;
-      if (newPage !== this.state.currentPage) {
-        this.setState({ currentPage: newPage });
+      const { context, value } = snapshot;
+      console.log(context);
+
+      this.setState({ context });
+
+      if (value !== this.state.currentPage) {
+        this.setState({ currentPage: value });
       }
     });
 
@@ -53,7 +63,11 @@ class App extends Component {
   }
 
   send = (event, value) => {
-    this.actorPage.send({ type: event, value: value});
+    if (value !== undefined) {
+      this.actorPage.send({ type: event, value });
+    } else {
+      this.actorPage.send({ type: event });
+    }
   };
 
   sendLanguage = (event) => {
@@ -62,41 +76,30 @@ class App extends Component {
 
   renderNavbar() {
     const { currentLanguage } = this.state;
-    return (
-      <Navbar
-        send={this.sendLanguage}
-        currentLanguage={currentLanguage}
-      />
-    );
+    return <Navbar send={this.sendLanguage} currentLanguage={currentLanguage} />;
   }
 
   renderScreen() {
-    const { currentPage, currentLanguage } = this.state;
+    const { currentPage, currentLanguage, context } = this.state;
 
     const pages = {
-      welcomePage: (
-        <WelcomePage send={this.send} currentLanguage={currentLanguage} />
-      ),
+      welcomePage: <WelcomePage send={this.send} currentLanguage={currentLanguage} />,
       exchangeCurrencyPage: (
-        <ExchangeCurrencyPage send={this.send} currentLanguage={currentLanguage} />
+        <ExchangeCurrencyPage send={this.send} context={context} currentLanguage={currentLanguage} />
       ),
       exchangeCalculatorPage: (
-        <ExchangeCalculatorPage send={this.send} currentLanguage={currentLanguage} />
+        <ExchangeCalculatorPage send={this.send} context={context} currentLanguage={currentLanguage} />
       ),
       summaryChoicePage: (
-        <SummaryChoicePage send={this.send} currentLanguage={currentLanguage} />
+        <SummaryChoicePage send={this.send} context={context} currentLanguage={currentLanguage} />
       ),
       paymentPage: (
-        <PaymentPage send={this.send} currentLanguage={currentLanguage} />
+        <PaymentPage send={this.send} context={context} currentLanguage={currentLanguage} />
       ),
-      endPage: (
-        <EndPage send={this.send} currentLanguage={currentLanguage} />
-      ),
+      endPage: <EndPage send={this.send} context={context} currentLanguage={currentLanguage} />,
     };
 
-    return pages[currentPage] || (
-      <WelcomePage send={this.send} currentLanguage={currentLanguage} />
-    );
+    return pages[currentPage] || <WelcomePage send={this.send} currentLanguage={currentLanguage} />;
   }
 
   render() {
@@ -105,10 +108,10 @@ class App extends Component {
         <Toaster
           richColors
           position="top-center"
-          reverseOrder = {false}
+          reverseOrder={false}
           toastOptions={{
-            className: 'my-toast-style',
-            duration: 3500
+            className: "my-toast-style",
+            duration: 3500,
           }}
         />
         {this.renderNavbar()}

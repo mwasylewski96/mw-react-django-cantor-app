@@ -66,6 +66,9 @@ export const cantorMachine = createMachine({
     },
     exchangeCalculatorPage: {
       on: {
+        BACK: {
+          target: "exchangeCurrencyPage"
+        }
       }
     },
     summaryChoicePage: {
