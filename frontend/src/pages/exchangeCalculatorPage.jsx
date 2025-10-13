@@ -48,11 +48,9 @@ class ExchangeCalculatorPage extends Component {
 
     const t = texts[currentLanguage] || texts.pl;
 
-    const { action, amount, fromCurrency, toCurrency } = context || {};
+    const { action, amount, fromCurrency, toCurrency, calculatedAmount } = context || {};
 
     const exchangeText = `${t.andExchange} ${fromCurrency} ${t.to} ${toCurrency}`;
-
-    const calculatedAmount = 999;
 
     const summaryText =
       action === "buy"

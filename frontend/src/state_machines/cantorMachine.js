@@ -11,6 +11,8 @@ export const cantorMachine = createMachine({
     amount: 0,
     fromCurrency: 'PLN',
     toCurrency: 'USD',
+
+    calculatedAmount: 0
   },
   states: {
     welcomePage: {
@@ -40,7 +42,7 @@ export const cantorMachine = createMachine({
         },
         AMOUNT: {
           actions: assign({
-            amount: ({event}) => event.value
+            amount: ({event}) => Number(event.value)
           })
         },
         FROMCURRENCY: {
@@ -55,17 +57,33 @@ export const cantorMachine = createMachine({
         },
         NEXT: [
         {
-          guard: ({context}) => context.amount > 0,
+          guard: ({context}) => context.amount > 0 && context.fromCurrency !== context.toCurrency,
           target: 'exchangeCalculatorPage'
         },
         {
+          guard: ({context}) => context.amount <= 0,
           actions: () => toast.error("Insert amount more than 0!")
+        },
+        {
+          guard: ({context}) => context.fromCurrency === context.toCurrency,
+          actions: () => toast.error("Currencies cannot be the same!")
         }
       ]
       },
     },
     exchangeCalculatorPage: {
+      entry: assign({
+            calculatedAmount: ({context}) => context.amount*4.00
+          }),
       on: {
+        CALCULATEDAMOUNT: {
+          actions: assign({
+            calculatedAmount: ({event}) => event.value
+          })
+        },
+        NEXT: {
+          target: "summaryChoicePage"
+        },
         BACK: {
           target: "exchangeCurrencyPage"
         }
@@ -73,6 +91,12 @@ export const cantorMachine = createMachine({
     },
     summaryChoicePage: {
       on: {
+        BACK: {
+          target: "exchangeCalculatorPage"
+        },
+        NEXT: {
+          target: "paymentPage"
+        }
       }
     },
     paymentPage: {
