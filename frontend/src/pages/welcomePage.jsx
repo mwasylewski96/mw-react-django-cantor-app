@@ -1,5 +1,16 @@
 import { Component } from "react";
-import { Box, Typography, Button, FormControlLabel, Checkbox } from "@mui/material";
+import MainBox from "../components/mainBox";
+import MainCard from "../components/mainCard";
+
+import {
+  Box,
+  Typography,
+  Button,
+  FormControlLabel,
+  Checkbox,
+  CardContent,
+  Divider,
+} from "@mui/material";
 import { FaSearch } from "react-icons/fa";
 
 class WelcomePage extends Component {
@@ -57,72 +68,79 @@ class WelcomePage extends Component {
     const t = texts[currentLanguage] || texts.pl;
 
     return (
-      <Box
-        display="flex"
-        flexDirection="column"
-        alignItems="center"
-        justifyContent="center"
-        minHeight="70vh"
-        textAlign="center"
-        gap={3}
-      >
-        {/* Tytuł */}
-        <Typography variant="h3" component="h1">
-          {t.title}
-        </Typography>
-
-        {/* Checkbox */}
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={accepted}
-              onChange={this.handleCheckboxChange}
-              color="primary"
-            />
-          }
-          label={t.accept}
-        />
-
-        {/* Przycisk Start */}
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={this.handleStart}
-          size="large"
+      <MainBox>
+        <MainCard
+          maxWidth={400}
         >
-          {t.start}
-        </Button>
+          <CardContent>
+            <Box
+              display="flex"
+              flexDirection="column"
+              alignItems="center"
+              justifyContent="center"
+              textAlign="center"
+              gap={3}
+            >
+              <Typography variant="h4" component="h1" fontWeight="bold">
+                {t.title}
+              </Typography>
 
-        {/* Przycisk Przeczytaj regulamin z lupką */}
-        <Button
-          variant="text"
-          startIcon={<FaSearch />}
-          color="secondary"
-          onClick={this.toggleRules}
-        >
-          {t.read}
-        </Button>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={accepted}
+                    onChange={this.handleCheckboxChange}
+                    color="primary"
+                  />
+                }
+                label={t.accept}
+              />
 
-        {/* Regulamin pod spodem po kliknięciu przycisku „Przeczytaj regulamin” */}
-        {showRules && (
-          <Box
-            mt={4}
-            sx={{
-              maxWidth: 600,
-              textAlign: "left",
-              p: 3,
-              border: "1px solid #ccc",
-              borderRadius: 2,
-              backgroundColor: "#f9f9f9",
-            }}
-          >
-            <Typography variant="h5" gutterBottom>
-              {t.rulesTitle}
-            </Typography>
-            <Typography variant="body1">{t.rulesContent}</Typography>
-          </Box>
-        )}
-      </Box>
+              <Button
+                variant="contained"
+                color="warning"
+                onClick={this.handleStart}
+                size="large"
+                disabled={!accepted}
+                sx={{ width: "70%", borderRadius: 2 }}
+              >
+                {t.start}
+              </Button>
+
+              <Button
+                variant="text"
+                startIcon={<FaSearch />}
+                color="primary"
+                onClick={this.toggleRules}
+              >
+                {t.read}
+              </Button>
+
+              {showRules && (
+                <Box
+                  mt={1}
+                  sx={{
+                    width: "100%",
+                    textAlign: "left",
+                    p: 2,
+                    border: "1px solid #e0e0e0",
+                    borderRadius: 2,
+                    backgroundColor: "#fafafa",
+                  }}
+                >
+                  <Typography variant="h6" gutterBottom>
+                    {t.rulesTitle}
+                  </Typography>
+                  <Divider sx={{ mb: 1 }} />
+                  <Typography variant="body2" color="text.secondary">
+                    {t.rulesContent}
+                  </Typography>
+                </Box>
+              )}
+            </Box>
+          </CardContent>
+        </MainCard>
+      </MainBox>
     );
   }
 }

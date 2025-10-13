@@ -27,6 +27,7 @@ class App extends Component {
     this.actorLanguage = createActor(languageMachine);
 
     this.pageSubscription = this.actorPage.subscribe((snapshot) => {
+      console.log(snapshot.context)
       const newPage = snapshot.value;
       if (newPage !== this.state.currentPage) {
         this.setState({ currentPage: newPage });
@@ -49,11 +50,10 @@ class App extends Component {
     this.actorLanguage?.stop?.();
     this.pageSubscription?.unsubscribe?.();
     this.languageSubscription?.unsubscribe?.();
-}
+  }
 
-
-  send = (event) => {
-    this.actorPage.send({ type: event });
+  send = (event, value) => {
+    this.actorPage.send({ type: event, value: value});
   };
 
   sendLanguage = (event) => {
@@ -101,16 +101,16 @@ class App extends Component {
 
   render() {
     return (
-      <div style={{ textAlign: "center", marginTop: 40 }}>
+      <div>
         <Toaster
-        richColors
-        position="top-center"
-        reverseOrder = {false}
-        toastOptions={{
-          className: 'my-toast-style',
-          duration: 3500
-        }}
-      />
+          richColors
+          position="top-center"
+          reverseOrder = {false}
+          toastOptions={{
+            className: 'my-toast-style',
+            duration: 3500
+          }}
+        />
         {this.renderNavbar()}
         {this.renderScreen()}
       </div>

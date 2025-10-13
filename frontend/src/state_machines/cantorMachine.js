@@ -6,13 +6,18 @@ export const cantorMachine = createMachine({
   initial: "welcomePage",
   context: {
     acceptedRules: false,
+
+    action: "buy",
+    amount: 0,
+    fromCurrency: 'PLN',
+    toCurrency: 'USD',
   },
   states: {
     welcomePage: {
       on: {
         ACCEPT: {
           actions: assign({
-            acceptedRules: () => true
+            acceptedRules: ({context}) => !context.acceptedRules
           })
         },
         NEXT: [
@@ -28,7 +33,36 @@ export const cantorMachine = createMachine({
     },
     exchangeCurrencyPage: {
       on: {
-      }
+        ACTION: {
+          actions: assign({
+            action: ({event}) => event.value
+          })
+        },
+        AMOUNT: {
+          actions: assign({
+            amount: ({event}) => event.value
+          })
+        },
+        FROMCURRENCY: {
+          actions: assign({
+            fromCurrency: ({event}) => event.value
+          })
+        },
+        TOCURRENCY: {
+          actions: assign({
+            toCurrency: ({event}) => event.value
+          })
+        },
+        NEXT: [
+        {
+          guard: ({context}) => context.amount > 0,
+          target: 'exchangeCalculatorPage'
+        },
+        {
+          actions: () => toast.error("Insert amount more than 0!")
+        }
+      ]
+      },
     },
     exchangeCalculatorPage: {
       on: {

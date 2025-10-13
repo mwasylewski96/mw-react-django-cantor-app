@@ -1,4 +1,5 @@
 import React from "react";
+import { Button } from "@mui/material";
 
 const Navbar = ({ send, currentLanguage }) => {
   const toggleLanguage = () => {
@@ -10,18 +11,40 @@ const Navbar = ({ send, currentLanguage }) => {
   };
 
   return (
-    <header style={{ marginBottom: 20 }}>
-      <button onClick={toggleLanguage}>
+    <header style={{ 
+      marginTop: 20,
+      marginBottom: 20,
+      textAlign: "right",
+      right: 20,
+      position: "fixed",
+      top: "0" 
+      }}
+    >
+      <Button
+        variant="outlined"
+        color="primary"
+        onClick={toggleLanguage}
+        sx={{
+          borderRadius: 3,
+          textTransform: "none",
+          fontSize: "0.95rem",
+          fontWeight: 500,
+          width: "7rem",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center"
+        }}
+      >
         {currentLanguage === "pl" ? (
           <>
-            <b>PL</b> | ENG
+            <b>PL</b> <span>|</span>ENG
           </>
         ) : (
           <>
-            PL | <b>ENG</b>
+            PL <span>|</span><b>ENG</b>
           </>
         )}
-      </button>
+      </Button>
     </header>
   );
 };
