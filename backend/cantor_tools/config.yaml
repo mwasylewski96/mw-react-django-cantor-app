@@ -1,0 +1,15 @@
+'cantor_app':
+  'mode': 'develop' # develop or production
+  'secret_key': 'django-insecure-$t=7*n*33bik*fj4r8fo@+tu5ohxilu6-)_ft77s9%24(50gyy'
+  'logging':
+    'level': 'DEBUG'
+    'logmodulename': 'api'
+  'superuser':
+    'username': marcin
+    'password': 'mwcant7890!'
+  'path':
+    'main_win': 'C:\Users\mwasy\OneDrive\Pulpit\MARCIN\Programista\Python\ReactCantor\backend/cantor_app'
+    'server_cloud': '/home/marcin/reactCantor/backend/cantor_app'
+  'api_token':
+    'header': 'x-currency-token'
+    'value': 'dasdiubasiob1=231231238913y4-n432r2nby83rt29'

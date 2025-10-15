@@ -1,0 +1,9 @@
+Metadata-Version: 2.4
+Name: Cantor-App
+Version: 1.0.0
+Requires-Dist: Django>=5.0
+Requires-Dist: django-ninja>=1.1.0
+Requires-Dist: gunicorn>=21.0.0
+Requires-Dist: PyYAML
+Requires-Dist: django-ninja-extra
+Dynamic: requires-dist
