@@ -8,6 +8,40 @@ class DatabaseController:
             self
     ):
         pass
+    
+    @staticmethod
+    def get_correct_currency_pair_and_type_of_rate(
+            currency_pair,
+            type_rate
+    ):
+        record = CurrencyPair.objects.filter(
+            currency_pair=currency_pair
+        ).first()
+        if record is not None:
+            if type_rate == "buy":
+                return Result.success(record.buy_rate)
+            else:
+                return Result.success(record.sell_rate)
+        else:
+            return Result.error('No currency pair found in database!')
+
+
+    def calculate_exchange(
+            self,
+            currency,
+            type_rate,
+            amount
+    ):
+        result = self.get_correct_currency_pair_and_type_of_rate(
+            currency_pair=currency,
+            type_rate=type_rate
+        )
+        if result.success:
+            rate = result.value
+            return Result.success(amount*rate)
+        else:
+            return Result.error(result.error)
+
 
     @staticmethod
     def get_currencies():

@@ -2,19 +2,19 @@ from django.db import models
 
 class CurrenciesValidator(models.TextChoices):
     
-    EURPLN = "EUR/PLN", "EUR/PLN"
-    USDPLN = "USD/PLN", "USD/PLN"
-    CHFPLN = "CHF/PLN", "CHF/PLN"
-    EURUSD = "EUR/USD", "EUR/USD"
-    EURCHF = "EUR/CHF", "EUR/CHF"
-    USDCHF = "USD/CHF", "USD/CHF"
+    EURPLN = "EUR/PLN"
+    USDPLN = "USD/PLN"
+    CHFPLN = "CHF/PLN"
+    EURUSD = "EUR/USD"
+    EURCHF = "EUR/CHF"
+    USDCHF = "USD/CHF"
     
-    PLNEUR = "PLN/EUR", "PLN/EUR"
-    PLNUSD = "PLN/USD", "PLN/USD"
-    PLNCHF = "PLN/CHF", "PLN/CHF"
-    USDEUR = "USD/EUR", "USD/EUR"
-    CHFEUR = "CHF/EUR", "CHF/EUR"
-    CHFUSD = "CHF/USD", "CHF/USD"
+    PLNEUR = "PLN/EUR"
+    PLNUSD = "PLN/USD"
+    PLNCHF = "PLN/CHF"
+    USDEUR = "USD/EUR"
+    CHFEUR = "CHF/EUR"
+    CHFUSD = "CHF/USD"
     
 class BankValidator(models.TextChoices):
     ALFA = "ALFA"
