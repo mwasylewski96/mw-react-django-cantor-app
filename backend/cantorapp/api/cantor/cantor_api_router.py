@@ -139,10 +139,10 @@ def transaction(
 ):
     """
     Transaction simulation:
-    - 30% for success
-    - 30% for NOT FOUND (400)
-    - 30% for SERVER ERROR (500)
-    - 10% for TIMEOUT (408)
+    - 30% for success            - success
+    - 30% for NOT FOUND (400)    - not_found
+    - 30% for SERVER ERROR (500) - server_error
+    - 10% for TIMEOUT (408)      - timeout
     """
 
     outcomes = ["success", "not_found", "server_error", "timeout"]
