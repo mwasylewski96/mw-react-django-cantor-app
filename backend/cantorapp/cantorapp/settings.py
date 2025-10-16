@@ -14,6 +14,12 @@ SECRET_KEY = get_secret_key_config()
 
 DEBUG = get_run_app_mode() == 'develop'
 
+if not DEBUG:
+    CSRF_TRUSTED_ORIGINS = [
+        f"https://{get_domain_config()}",
+        f"https://{get_domain_www_config()}",
+    ]
+
 ALLOWED_HOSTS = get_allowed_hosts()
 
 INSTALLED_APPS = [

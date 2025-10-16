@@ -33,6 +33,13 @@ def get_api_token_header():
 def get_api_token_value():
     return get_config().get('api_token', {}).get('value')
 
+def get_domain_config():
+    app = get_config()
+    return app.get('domain')
+
+def get_domain_www_config():
+    app = get_config()
+    return app.get('domain_www')
 
 def get_allowed_hosts():
     app = get_config()

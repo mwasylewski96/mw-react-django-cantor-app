@@ -4,6 +4,8 @@
   'logging':
     'level': 'DEBUG'
     'logmodulename': 'api'
+  'domain': 'mw-react-django-cantor-app.onrender.com'
+  'domain_www': 'www.mw-react-django-cantor-app.onrender.com'
   'superuser':
     'username': marcin
     'password': 'mwcant7890!'
