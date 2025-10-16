@@ -1,5 +1,5 @@
 'cantor_app':
-  'mode': 'develop' # develop or production
+  'mode': 'production' # develop or production
   'secret_key': 'django-insecure-$t=7*n*33bik*fj4r8fo@+tu5ohxilu6-)_ft77s9%24(50gyy'
   'logging':
     'level': 'DEBUG'
