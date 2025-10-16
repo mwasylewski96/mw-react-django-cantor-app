@@ -6,4 +6,5 @@ Requires-Dist: django-ninja>=1.1.0
 Requires-Dist: gunicorn>=21.0.0
 Requires-Dist: PyYAML
 Requires-Dist: django-ninja-extra
+Requires-Dist: whitenoise
 Dynamic: requires-dist
