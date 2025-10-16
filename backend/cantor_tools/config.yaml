@@ -12,4 +12,4 @@
     'value': 'dasdiubasiob1=231231238913y4-n432r2nby83rt29'
   'allowed_hosts':
     - '127.0.0.1'
-    - 'reactcantor.onrender.com'
+    - 'mw-react-django-cantor-app.onrender.com'
