@@ -1,65 +1,39 @@
 ####################
-# EXTERNAL LIBRARIES
+# Minimal project config helpers
 ####################
 import os
-####################
-# INTERNAL LIBRARIES
-####################
 from .tools import read_yaml
 
 
-config_yaml_path = os.path.dirname(
-    os.path.realpath(
-        __file__
-    )) + '/config.yaml'
-config = read_yaml(config_yaml_path)
-
-RELATIVE_STATIC_PATH = 'static/'
-RELATIVE_ASSETS_PATH = RELATIVE_STATIC_PATH + 'assets/'
-
-RELATIVE_APP_API = 'api/'
+config = {}
+cfg_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'config.yaml')
+if os.path.exists(cfg_path):
+    try:
+        config = read_yaml(cfg_path) or {}
+    except Exception:
+        config = {}
 
 
-def get_cantor_app_config():
-    return config['cantor_app']
+def get_config() -> dict:
+    return config.get('cantor_app', {})
 
 
 def get_run_app_mode():
-    return get_cantor_app_config()['mode']
+    return get_config().get('mode', 'develop')
 
 
 def get_secret_key_config():
-    return get_cantor_app_config()['secret_key']
-
-
-def get_main_path():
-    if get_run_app_mode() == 'develop':
-        return get_cantor_app_config()['path']['main_win']
-    if get_run_app_mode() == 'production':
-        return get_cantor_app_config()['path']['server_cloud']
-
-
-def get_static_path():
-    return get_main_path() + '/static'
-
-
-def get_assets_path():
-    return get_static_path() + '/assets'
+    return get_config().get('secret_key')
 
 
 def get_api_token_header():
-    return get_cantor_app_config()['api_token']['header']
+    return get_config().get('api_token', {}).get('header')
 
 
 def get_api_token_value():
-    return get_cantor_app_config()['api_token']['value']
+    return get_config().get('api_token', {}).get('value')
 
 
-# LOGGING
-
-def get_log_level():
-    return get_cantor_app_config()['logging']['level']
-
-
-def get_log_module_name():
-    return get_cantor_app_config()['logging']['logmodulename']
+def get_allowed_hosts():
+    app = get_config()
+    return app.get('allowed_hosts')

@@ -6,14 +6,15 @@ from pathlib import Path
 # EXTERNAL LIBRARIES #
 ######################
 from cantor_tools.config import *
+import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = get_secret_key_config()
 
-DEBUG = get_run_app_mode()
+DEBUG = get_run_app_mode() == 'develop'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = get_allowed_hosts()
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -89,7 +90,8 @@ USE_I18N = True
 USE_TZ = True
 
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
