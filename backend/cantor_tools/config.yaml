@@ -11,6 +11,5 @@
     'header': 'x-currency-token'
     'value': 'dasdiubasiob1=231231238913y4-n432r2nby83rt29'
   'allowed_hosts':
-    - 'localhost'
-    - '127.0.0.1'
-    - 'mw-cantor_app.onrender.com'
+    - 'mw-cantorapp.onrender.com'
+    - 'reactcantor.onrender.com'
