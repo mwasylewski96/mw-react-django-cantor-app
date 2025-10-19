@@ -16,6 +16,7 @@ export const cantorMachine = createMachine({
     toCurrency: 'USD',
 
     calculatedAmount: 0,
+    transactionRate: 0,
     currencies: [],
 
     user: null,
@@ -102,7 +103,7 @@ export const cantorMachine = createMachine({
         }),
         onDone: {
           target: "exchangeCalculatorPage",
-          actions: "setCalculatedAmount"
+          actions: "setCalculatedAmountAndTransactionRate"
         },
         onError: {
           target: "exchangeCurrencyPage",
@@ -144,6 +145,9 @@ export const cantorMachine = createMachine({
   actions: {
     setCurrencies: assign({currencies: ({event}) => event.output.payload}),
     setError: ({ event }) => {toast.error("ERROR:", event);},
-    setCalculatedAmount: assign({ calculatedAmount: ({event}) => event.output.payload.value.toFixed(2)})
+    setCalculatedAmountAndTransactionRate: assign({ 
+      calculatedAmount: ({event}) => event.output.payload.calculatedAmount.toFixed(2),
+      transactionRate: ({event}) => event.output.payload.transactionRate
+    })
   },
 });

@@ -21,7 +21,7 @@ class SummaryChoicePage extends Component {
       fromCurrency: context.fromCurrency || "PLN",
       toCurrency: context.toCurrency || "USD",
       calculatedAmount: context.calculatedAmount || 0,
-      rate: 4.0,
+      rate: context.transactionRate || 0,
     };
   }
 
@@ -92,13 +92,13 @@ class SummaryChoicePage extends Component {
               </Typography>
 
                 <Typography variant="h6" fontWeight="500">
-                  {isBuy ? t.youNeed : t.youWillGet}:{" "}
+                  {isBuy ? t.youWillGet : t.youNeed}:{" "}
                   <b>
                     {amount} {fromCurrency}
                   </b>{" "}
                 </Typography>
                 <Typography variant="h6" fontWeight="500">
-                  {isBuy ? t.toBuy : t.toSell}{" "}
+                  {isBuy ? t.toSell : t.toBuy}{" "}
                   <b>{calculatedAmount} {toCurrency}</b>
                 </Typography>
                 

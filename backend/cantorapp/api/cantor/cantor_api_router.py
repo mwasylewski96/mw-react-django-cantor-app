@@ -201,9 +201,7 @@ def calculate(
     if result.success:
         return {
             "success": True,
-            "payload": {
-                "value": result.value
-            },
+            "payload": result.value,
             "message": "[SUCCESS] Succesfully calculated amount!"
         }
     else:

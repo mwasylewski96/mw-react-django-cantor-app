@@ -38,7 +38,11 @@ class DatabaseController:
         )
         if result.success:
             rate = result.value
-            return Result.success(amount*rate)
+            result_data = {
+                "calculatedAmount": amount*rate,
+                "transactionRate": rate
+            }
+            return Result.success(result_data)
         else:
             return Result.error(result.error)
 
