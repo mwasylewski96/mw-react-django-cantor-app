@@ -29,7 +29,7 @@ export const cantorMachine = createMachine({
 
 
     error: null,
-    exchangeError: false,
+    exchangeError: true,
   },
   states: {
     welcomePage: {
@@ -142,6 +142,12 @@ export const cantorMachine = createMachine({
       }
     },
     paymentPage: {
+      after: {
+        30000: {
+          target: "endPage",
+          actions: () => toast.error("Transaction suspended! Session timed out!")
+        }
+      },
       on: {
         BANK: {
           actions: assign({
