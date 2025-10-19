@@ -5,7 +5,7 @@ export const fetchCurrencies = async () => {
     const response = await api.get('/currencies');
     return response.data;
   } catch (error) {
-    console.error('Error with response:', error);
+    console.error('Error with response:', error.message, error.response.data.detail);
     throw new Error("Failed with fetching currencies");
   }
 };

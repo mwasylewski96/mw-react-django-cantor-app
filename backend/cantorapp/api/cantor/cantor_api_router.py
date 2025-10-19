@@ -70,9 +70,9 @@ def pay(
 ):
     """
     Payment simulation.
-    - 30% for success
-    - 30% for 402 Payment Required
-    - 30% for 500 Server Error
+    - 70% for success
+    - 10% for 402 Payment Required
+    - 10% for 500 Server Error
     - 10% for timeout
     By defining `force_outcome` You can force chosen outcome.
     """
@@ -139,9 +139,9 @@ def transaction(
 ):
     """
     Transaction simulation:
-    - 30% for success            - success
-    - 30% for NOT FOUND (400)    - not_found
-    - 30% for SERVER ERROR (500) - server_error
+    - 70% for success            - success
+    - 10% for NOT FOUND (400)    - not_found
+    - 10% for SERVER ERROR (500) - server_error
     - 10% for TIMEOUT (408)      - timeout
     """
 

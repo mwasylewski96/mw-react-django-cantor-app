@@ -4,9 +4,6 @@ export const postCalculationExchange = async (
   currency, type_rate, amount
 ) => {
   try {
-    console.log("CURENCY: ", currency)
-    console.log("TYPE_RATE: ", type_rate)
-    console.log("AMOUNT: ", amount)
     const response = await api.post(
         '/calculate',
         {
@@ -18,7 +15,7 @@ export const postCalculationExchange = async (
     );
     return response.data;
   } catch (error) {
-      console.error('Error with response:', error);
+      console.error('Error with response:', error.message, error.response.data.detail);
     throw new Error('Failed with calculation request. Check console for more info!');
   }
 };

@@ -13,6 +13,7 @@ import ExchangeCalculatorPage from "./pages/exchangeCalculatorPage";
 import SummaryChoicePage from "./pages/summaryChoicePage";
 import PaymentPage from "./pages/paymentPage";
 import EndPage from "./pages/endPage";
+import LoadingPage from "./pages/loadingPage";
 
 class App extends Component {
   constructor(props) {
@@ -27,7 +28,6 @@ class App extends Component {
     );
     this.actorLanguage = createActor(languageMachine);
 
-    // Ustawiamy początkowy stan z snapshotów maszyn
     const pageSnapshot = this.actorPage.getSnapshot();
     const langSnapshot = this.actorLanguage.getSnapshot();
 
@@ -88,11 +88,30 @@ class App extends Component {
   renderScreen() {
     const { currentPage, currentLanguage, context } = this.state;
 
+    const messages = {
+      pl: {
+        fetchingCurrencies: "Pobieranie dostępnych walut...",
+        calculatingExchange: "Obliczanie kursu wymiany...",
+        processingPayment: "Przetwarzanie płatności...",
+        finalizingTransaction: "Finalizacja transakcji...",
+      },
+      en: {
+        fetchingCurrencies: "Fetching available currencies...",
+        calculatingExchange: "Calculating exchange...",
+        processingPayment: "Processing payment...",
+        finalizingTransaction: "Finalizing transaction...",
+      },
+    };
+
+    const lang = currentLanguage === "pl" ? "pl" : "en";
+
     const pages = {
       welcomePage: <WelcomePage send={this.send} currentLanguage={currentLanguage} />,
+      currenciesApi: <LoadingPage message={messages[lang].fetchingCurrencies} />,
       exchangeCurrencyPage: (
         <ExchangeCurrencyPage send={this.send} context={context} currentLanguage={currentLanguage} />
       ),
+      calculatingExchangeCurrencyApi: <LoadingPage message={messages[lang].calculatingExchange} />,
       exchangeCalculatorPage: (
         <ExchangeCalculatorPage send={this.send} context={context} currentLanguage={currentLanguage} />
       ),
@@ -102,10 +121,12 @@ class App extends Component {
       paymentPage: (
         <PaymentPage send={this.send} context={context} currentLanguage={currentLanguage} />
       ),
+      paymentApi: <LoadingPage message={messages[lang].processingPayment} />,
+      transactionApi: <LoadingPage message={messages[lang].finalizingTransaction} />,
       endPage: <EndPage send={this.send} context={context} currentLanguage={currentLanguage} />,
     };
 
-    return pages[currentPage] || <WelcomePage send={this.send} currentLanguage={currentLanguage} />;
+    return pages[currentPage];
   }
 
   render() {

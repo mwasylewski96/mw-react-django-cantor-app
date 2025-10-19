@@ -5,7 +5,7 @@ export const postTransaction = async (
 ) => {
   try {
     const response = await api.post(
-        '/pay',
+        '/transaction',
         {
             "transactionId": transactionId,
             "currency": currency,
@@ -16,7 +16,7 @@ export const postTransaction = async (
     );
     return response.data;
   } catch (error) {
-      console.error('Failed with transaction request:', error);
+       console.error('Error with response:', error.message, error.response.data.detail);
     throw error;
   }
 };

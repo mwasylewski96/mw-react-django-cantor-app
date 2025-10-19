@@ -231,7 +231,7 @@ export const cantorMachine = createMachine({
       calculatedAmount: ({event}) => Number(event.output.payload.calculatedAmount.toFixed(2)),
       transactionRate: ({event}) => Number(event.output.payload.transactionRate)
     }),
-    setTransactionId: assign({ transactionId: ({event}) => event.output.payload}),
+    setTransactionId: assign({ transactionId: ({event}) => event.output.payload.transactionId}),
     setErrorExchangeTrue: assign({ exchangeError: true}),
     setErrorExchangeFalse: assign({ exchangeError: false}),
   },
