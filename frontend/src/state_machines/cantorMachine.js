@@ -1,5 +1,8 @@
-import { assign, createMachine } from "xstate";
+import { assign, createMachine, fromPromise } from "xstate";
 import { toast } from "sonner";
+import { fetchCurrencies } from '../api/fetchCurrenciesReq';
+import { postCalculationExchange } from '../api/postCalculationReq';
+
 
 export const cantorMachine = createMachine({
   id: "main",
@@ -12,7 +15,11 @@ export const cantorMachine = createMachine({
     fromCurrency: 'PLN',
     toCurrency: 'USD',
 
-    calculatedAmount: 0
+    calculatedAmount: 0,
+    currencies: [],
+
+    user: null,
+    error: null,
   },
   states: {
     welcomePage: {
@@ -34,6 +41,15 @@ export const cantorMachine = createMachine({
       } 
     },
     exchangeCurrencyPage: {
+      invoke: {
+        src: fromPromise(() => fetchCurrencies()),
+        onDone: {
+          actions: 'setCurrencies',
+        },
+        onError: {
+          actions: 'setError',
+        },
+      },
       on: {
         ACTION: {
           actions: assign({
@@ -58,7 +74,7 @@ export const cantorMachine = createMachine({
         NEXT: [
         {
           guard: ({context}) => context.amount > 0 && context.fromCurrency !== context.toCurrency,
-          target: 'exchangeCalculatorPage'
+          target: 'calculating'
         },
         {
           guard: ({context}) => context.amount <= 0,
@@ -71,10 +87,26 @@ export const cantorMachine = createMachine({
       ]
       },
     },
+    calculating: {
+      invoke: {
+        src: fromPromise(({ input }) => {
+          return postCalculationExchange(input.currency, input.action, input.amount)}),
+        input: ({context}) => ({
+            "currency": `${context.fromCurrency}/${context.toCurrency}`,
+            "action": context.action,
+            "amount": context.amount,
+        }),
+        onDone: {
+          target: "exchangeCalculatorPage",
+          actions: "setCalculatedAmount"
+        },
+        onError: {
+          target: "exchangeCalculatorPage",
+          actions: "setError"
+        }
+      }
+    },
     exchangeCalculatorPage: {
-      entry: assign({
-            calculatedAmount: ({context}) => context.amount*4.00
-          }),
       on: {
         CALCULATEDAMOUNT: {
           actions: assign({
@@ -107,5 +139,12 @@ export const cantorMachine = createMachine({
       on: {
       }
     },
+  },
+},
+{
+  actions: {
+    setCurrencies: assign({currencies: ({event}) => event.output.payload}),
+    setError: ({ event }) => {console.log("ERROR:", event);},
+    setCalculatedAmount: assign({ calculatedAmount: ({event}) => event.output.payload.value })
   },
 });

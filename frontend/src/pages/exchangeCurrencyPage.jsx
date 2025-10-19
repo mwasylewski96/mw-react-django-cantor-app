@@ -15,13 +15,14 @@ import {
   TableHead,
   TableRow,
   Paper,
+  CircularProgress,
 } from "@mui/material";
 
 class ExchangeCurrencyPage extends Component {
   constructor(props) {
     super(props);
 
-    const { context } = props;
+    const { context = {} } = props; // <- bezpieczny fallback
     this.state = {
       action: context.action || "buy",
       amount: context.amount || "",
@@ -42,7 +43,7 @@ class ExchangeCurrencyPage extends Component {
 
   render() {
     const { action, amount, fromCurrency, toCurrency } = this.state;
-    const { currentLanguage, context } = this.props;
+    const { currentLanguage = "pl", context = {} } = this.props;
 
     const texts = {
       pl: {
@@ -60,6 +61,7 @@ class ExchangeCurrencyPage extends Component {
         pair: "Para",
         buyRate: "Kupno",
         sellRate: "Sprzedaż",
+        loading: "Ładowanie…",
       },
       eng: {
         title: "Exchange currency",
@@ -76,23 +78,16 @@ class ExchangeCurrencyPage extends Component {
         pair: "Pair",
         buyRate: "Buy",
         sellRate: "Sell",
+        loading: "Loading…",
       },
     };
 
     const t = texts[currentLanguage] || texts.pl;
     const currencies = ["PLN", "USD", "EUR", "CHF"];
+    const rates = this.props.context?.currencies || null;
 
     const exchangeText =
       action === "buy" ? `${t.andExchange} ${t.from}` : `${t.andExchange} ${t.to}`;
-
-    const rates = context.rates || [
-      { pair: "USD/PLN", buy: 4.12, sell: 4.18 },
-      { pair: "EUR/PLN", buy: 4.36, sell: 4.42 },
-      { pair: "CHF/PLN", buy: 4.59, sell: 4.65 },
-      { pair: "EUR/USD", buy: 1.06, sell: 1.08 },
-      { pair: "EUR/CHF", buy: 0.96, sell: 0.98 },
-      { pair: "CHF/USD", buy: 1.09, sell: 1.11 },
-    ];
 
     return (
       <MainBox>
@@ -180,32 +175,45 @@ class ExchangeCurrencyPage extends Component {
                 <Typography variant="h6" gutterBottom>
                   {t.ratesTitle}
                 </Typography>
-                <TableContainer component={Paper}>
-                  <Table>
-                    <TableHead>
-                      <TableRow>
-                        <TableCell>
-                          <strong>{t.pair}</strong>
-                        </TableCell>
-                        <TableCell align="right">
-                          <strong>{t.buyRate}</strong>
-                        </TableCell>
-                        <TableCell align="right">
-                          <strong>{t.sellRate}</strong>
-                        </TableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {rates.map((row) => (
-                        <TableRow key={row.pair}>
-                          <TableCell>{row.pair}</TableCell>
-                          <TableCell align="right">{row.buy.toFixed(2)}</TableCell>
-                          <TableCell align="right">{row.sell.toFixed(2)}</TableCell>
+                {rates ? (
+                  <TableContainer component={Paper}>
+                    <Table>
+                      <TableHead>
+                        <TableRow>
+                          <TableCell>
+                            <strong>{t.pair}</strong>
+                          </TableCell>
+                          <TableCell align="right">
+                            <strong>{t.buyRate}</strong>
+                          </TableCell>
+                          <TableCell align="right">
+                            <strong>{t.sellRate}</strong>
+                          </TableCell>
                         </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </TableContainer>
+                      </TableHead>
+                      <TableBody>
+                        {rates.map((row) => (
+                          <TableRow key={row.currency_pair}>
+                            <TableCell>{row.currency_pair}</TableCell>
+                            <TableCell align="right">
+                              {row.buy_rate ? row.buy_rate.toFixed(2) : "-"}
+                            </TableCell>
+                            <TableCell align="right">
+                              {row.sell_rate ? row.sell_rate.toFixed(2) : "-"}
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                ) : (
+                  <Box display="flex" justifyContent="center" mt={2}>
+                    <CircularProgress size={24} />
+                    <Typography variant="body2" ml={1}>
+                      {t.loading}
+                    </Typography>
+                  </Box>
+                )}
               </Box>
             </Box>
           </CardContent>
