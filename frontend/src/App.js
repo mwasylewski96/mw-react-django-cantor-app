@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Toaster } from "sonner";
+import { toast } from "sonner";
 import { createActor } from "xstate";
 import { cantorMachine } from "./state_machines/cantorMachine";
 import { languageMachine } from "./state_machines/languageMachine";
@@ -18,7 +19,12 @@ class App extends Component {
     super(props);
 
   
-    this.actorPage = createActor(cantorMachine);
+    this.actorPage = createActor(
+      cantorMachine.provide({
+        context: {
+          toast,
+      }})
+    );
     this.actorLanguage = createActor(languageMachine);
 
     // Ustawiamy początkowy stan z snapshotów maszyn

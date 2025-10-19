@@ -78,9 +78,9 @@ def pay(
     """
 
     outcomes = {
-        "success": 0.3,
-        "payment_failed": 0.3,
-        "server_error": 0.3,
+        "success": 0.7,
+        "payment_failed": 0.1,
+        "server_error": 0.1,
         "timeout": 0.1,
     }
     
@@ -146,7 +146,7 @@ def transaction(
     """
 
     outcomes = ["success", "not_found", "server_error", "timeout"]
-    weights = [0.3, 0.3, 0.3, 0.1]
+    weights = [0.7, 0.1, 0.1, 0.1]
 
     result = transaction_input.force_outcome or random.choices(
         population=outcomes,
@@ -156,9 +156,10 @@ def transaction(
 
     match result:
         case "success":
+            time.sleep(3)
             return {
                 "success": True,
-                "payload": transaction_input.model_dump(),
+                "payload": None,
                 "message": "[SUCCESS] Transaction executed successfully!",
             }
 
@@ -175,13 +176,14 @@ def transaction(
             )
 
         case "timeout":
-            time.sleep(3)
+            time.sleep(10)
             raise HttpError(
                 HTTPStatus.REQUEST_TIMEOUT,
                 "[ERROR] Transaction service timeout. Please try again later.",
             )
 
         case _:
+            time.sleep(1)
             raise HttpError(
                 HTTPStatus.INTERNAL_SERVER_ERROR,
                 "[ERROR] Unknown transaction state.",

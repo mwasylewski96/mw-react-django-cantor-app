@@ -103,6 +103,9 @@ class ExchangeCurrencyPage extends Component {
               <Typography variant="h4" fontWeight="bold">
                 {t.title}
               </Typography>
+              <Typography variant="h4" fontWeight="bold">
+                1/5
+              </Typography>
 
               <Box display="flex" flexDirection="column" gap={2} width="100%">
                 <Typography variant="body1" fontWeight="500">

@@ -2,6 +2,8 @@ import { assign, createMachine, fromPromise } from "xstate";
 import { toast } from "sonner";
 import { fetchCurrencies } from '../api/fetchCurrenciesReq';
 import { postCalculationExchange } from '../api/postCalculationReq';
+import { postPayment } from '../api/postPaymentReq';
+import { postTransaction } from '../api/postTransactionReq';
 
 
 export const cantorMachine = createMachine({
@@ -19,8 +21,15 @@ export const cantorMachine = createMachine({
     transactionRate: 0,
     currencies: [],
 
-    user: null,
+    bank: "",
+    clientId: "",
+    password: "",
+
+    transactionId: "",
+
+
     error: null,
+    exchangeError: false,
   },
   states: {
     welcomePage: {
@@ -95,7 +104,8 @@ export const cantorMachine = createMachine({
     calculatingExchangeCurrencyApi: {
       invoke: {
         src: fromPromise(({ input }) => {
-          return postCalculationExchange(input.currency, input.action, input.amount)}),
+          return postCalculationExchange(input.currency, input.action, input.amount)
+        }),
         input: ({context}) => ({
             "currency": `${context.fromCurrency}/${context.toCurrency}`,
             "action": context.action,
@@ -133,21 +143,96 @@ export const cantorMachine = createMachine({
     },
     paymentPage: {
       on: {
+        BANK: {
+          actions: assign({
+            bank: ({event}) => event.value
+          })
+        },
+        CLIENTID: {
+          actions: assign({
+            clientId: ({event}) => event.value
+          })
+        },
+        PASSWORD: {
+          actions: assign({
+            password: ({event}) => event.value
+          })
+        },
+        BACK: {
+          target: "summaryChoicePage"
+        },
+        PAY: {
+          target: "paymentApi"
+        }
       }
+    },
+    paymentApi: {
+      invoke: {
+        src: fromPromise(({ input }) => {
+          return postPayment(input.amount, input.bank, input.id, input.password)
+        }),
+        input: ({context}) => ({
+            "amount": context.action === "buy" ? context.calculatedAmount : context.amount,
+            "bank": context.bank,
+            "id": context.clientId,
+            "password": context.password,
+        }),
+        onDone: {
+          target: "transactionApi",
+          actions: "setTransactionId" 
+        },
+        onError: {
+          target: "endPage",
+          actions: [
+            "setError",
+            "setErrorExchangeTrue"
+          ]
+        }
+      },
+    },
+    transactionApi: {
+      invoke: {
+        src: fromPromise(({ input }) => {
+          return postTransaction(input.transactionId, input.currency, input.type, input.amount);
+        }),
+        input: ({context}) => ({
+          "transactionId": context.transactionId,
+          "currency": `${context.fromCurrency}/${context.toCurrency}`,
+          "type": context.action,
+          "amount": context.action === "buy" ? context.calculatedAmount : context.amount,
+        }),
+        onDone: {
+          target: "endPage",
+          actions: "setErrorExchangeFalse"
+        },
+        onError: {
+          target: "endPage",
+          actions: [
+            "setError",
+            "setErrorExchangeTrue"
+          ]
+        }
+      },
     },
     endPage: {
       on: {
+        RESTART: {
+          target: "exchangeCurrencyPage"
+        }
       }
     },
   },
 },
 {
   actions: {
-    setCurrencies: assign({currencies: ({event}) => event.output.payload}),
-    setError: ({ event }) => {toast.error("ERROR:", event);},
+    setError: () => toast.error("Error with api! Check console logs!"),
+    setCurrencies: assign({currencies: ({event}) => event.output.payload}),    
     setCalculatedAmountAndTransactionRate: assign({ 
-      calculatedAmount: ({event}) => event.output.payload.calculatedAmount.toFixed(2),
-      transactionRate: ({event}) => event.output.payload.transactionRate
-    })
+      calculatedAmount: ({event}) => Number(event.output.payload.calculatedAmount.toFixed(2)),
+      transactionRate: ({event}) => Number(event.output.payload.transactionRate)
+    }),
+    setTransactionId: assign({ transactionId: ({event}) => event.output.payload}),
+    setErrorExchangeTrue: assign({ exchangeError: true}),
+    setErrorExchangeFalse: assign({ exchangeError: false}),
   },
 });

@@ -87,7 +87,7 @@ class SummaryChoicePage extends Component {
               <Typography variant="h4" fontWeight="bold">
                 {t.title}
               </Typography>
-              <Typography variant="h5" fontWeight="bold">
+              <Typography variant="h4" fontWeight="bold">
                 {t.step}
               </Typography>
 
