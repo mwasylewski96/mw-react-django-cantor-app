@@ -91,12 +91,14 @@ class App extends Component {
     const messages = {
       pl: {
         fetchingCurrencies: "Pobieranie dostępnych walut...",
+        fetchingBanks: "Pobieranie dostępnych banków...",
         calculatingExchange: "Obliczanie kursu wymiany...",
         processingPayment: "Przetwarzanie płatności...",
         finalizingTransaction: "Finalizacja transakcji...",
       },
       en: {
         fetchingCurrencies: "Fetching available currencies...",
+        fetchingBanks: "Fetching available banks...",
         calculatingExchange: "Calculating exchange...",
         processingPayment: "Processing payment...",
         finalizingTransaction: "Finalizing transaction...",
@@ -118,6 +120,7 @@ class App extends Component {
       summaryChoicePage: (
         <SummaryChoicePage send={this.send} context={context} currentLanguage={currentLanguage} />
       ),
+      banksApi: <LoadingPage message={messages[lang].fetchingBanks} />,
       paymentPage: (
         <PaymentPage send={this.send} context={context} currentLanguage={currentLanguage} />
       ),

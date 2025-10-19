@@ -4,7 +4,7 @@ import { fetchCurrencies } from '../api/fetchCurrenciesReq';
 import { postCalculationExchange } from '../api/postCalculationReq';
 import { postPayment } from '../api/postPaymentReq';
 import { postTransaction } from '../api/postTransactionReq';
-
+import { fetchBanks } from "../api/fetchBanksReq";
 
 export const cantorMachine = createMachine({
   id: "main",
@@ -20,6 +20,7 @@ export const cantorMachine = createMachine({
     calculatedAmount: 0,
     transactionRate: 0,
     currencies: [],
+    banks: [],
 
     bank: "",
     clientId: "",
@@ -137,15 +138,31 @@ export const cantorMachine = createMachine({
           target: "exchangeCalculatorPage"
         },
         NEXT: {
-          target: "paymentPage"
+          target: "banksApi"
         }
+      }
+    },
+    banksApi: {
+      invoke: {
+        src: fromPromise(() => fetchBanks()),
+        onDone: {
+          actions: 'setBanks',
+          target: 'paymentPage'
+        },
+        onError: {
+          actions: 'setError',
+          target: 'summaryChoicePage'
+        },  
       }
     },
     paymentPage: {
       after: {
         30000: {
           target: "endPage",
-          actions: () => toast.error("Transaction suspended! Session timed out!")
+          actions: [
+            () => toast.error("Transaction suspended! Session timed out!"),
+            "setErrorExchangeTrue"
+          ]
         }
       },
       on: {
@@ -240,5 +257,6 @@ export const cantorMachine = createMachine({
     setTransactionId: assign({ transactionId: ({event}) => event.output.payload.transactionId}),
     setErrorExchangeTrue: assign({ exchangeError: true}),
     setErrorExchangeFalse: assign({ exchangeError: false}),
+    setBanks: assign({ banks: ({event}) => event.output.payload}),
   },
 });

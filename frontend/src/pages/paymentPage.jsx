@@ -47,6 +47,7 @@ class PaymentPage extends Component {
     const active = selectedBank === label;
     return (
       <Paper
+        key={label}
         onClick={() => this.selectBank(label)}
         elevation={active ? 6 : 1}
         sx={{
@@ -70,7 +71,8 @@ class PaymentPage extends Component {
 
   render() {
     const { selectedBank, clientId, password } = this.state;
-    const { currentLanguage } = this.props;
+    const { currentLanguage, context } = this.props;
+    const { banks = [] } = context || {}; // <- pobieramy banki z kontekstu
 
     const texts = {
       pl: {
@@ -81,6 +83,7 @@ class PaymentPage extends Component {
         id: "ID",
         password: "Hasło",
         pay: "Zapłać",
+        noBanks: "Brak dostępnych banków",
       },
       eng: {
         title: "Payment",
@@ -90,6 +93,7 @@ class PaymentPage extends Component {
         id: "ID",
         password: "Password",
         pay: "Pay",
+        noBanks: "No banks available",
       },
     };
 
@@ -99,8 +103,7 @@ class PaymentPage extends Component {
       <MainBox>
         <MainCard maxWidth={640}>
           <CardContent>
-            <Box
-              textAlign="center"> 
+            <Box textAlign="center">
               <Typography
                 variant="h4"
                 component="h1"
@@ -114,7 +117,13 @@ class PaymentPage extends Component {
               </Typography>
 
               <Box mt={2} mb={2} display="flex" justifyContent="center">
-                <Button variant="outlined" onClick={this.handleBack} color="inherit" size="large" sx={{ borderRadius: 2 }}>
+                <Button
+                  variant="outlined"
+                  onClick={this.handleBack}
+                  color="inherit"
+                  size="large"
+                  sx={{ borderRadius: 2 }}
+                >
                   {t.back}
                 </Button>
               </Box>
@@ -125,18 +134,32 @@ class PaymentPage extends Component {
                 </Typography>
 
                 <Grid container spacing={2} justifyContent="space-between">
-                  <Grid item xs={6} sx={{ display: "flex", justifyContent: "center", width: "22%"}}>
-                    {this.renderBankTile("ALFA")}
-                  </Grid>
-                  <Grid item xs={6} sx={{ display: "flex", justifyContent: "center", width: "22%"}}>
-                    {this.renderBankTile("BETA")}
-                  </Grid>
-                  <Grid item xs={6} sx={{ display: "flex", justifyContent: "center", width: "22%" }}>
-                    {this.renderBankTile("GAMMA")}
-                  </Grid>
-                  <Grid item xs={6} sx={{ display: "flex", justifyContent: "center", width: "22%" }}>
-                    {this.renderBankTile("OMEGA")}
-                  </Grid>
+                  {banks.length > 0 ? (
+                    banks.map((bank) => (
+                      <Grid
+                        item
+                        xs={6}
+                        sm={4}
+                        md={3}
+                        key={bank}
+                        sx={{
+                          display: "flex",
+                          justifyContent: "center",
+                          width: "22%"
+                        }}
+                      >
+                        {this.renderBankTile(bank)}
+                      </Grid>
+                    ))
+                  ) : (
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      sx={{ mt: 2 }}
+                    >
+                      {t.noBanks}
+                    </Typography>
+                  )}
                 </Grid>
               </Box>
 
