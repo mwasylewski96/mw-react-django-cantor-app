@@ -19,9 +19,9 @@ class DatabaseController:
         ).first()
         if record is not None:
             if type_rate == "buy":
-                return Result.success(record.buy_rate)
-            else:
                 return Result.success(record.sell_rate)
+            else:
+                return Result.success(record.buy_rate)
         else:
             return Result.error('No currency pair found in database!')
 

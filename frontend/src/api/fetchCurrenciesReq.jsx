@@ -6,6 +6,6 @@ export const fetchCurrencies = async () => {
     return response.data;
   } catch (error) {
     console.error('Error with response:', error);
-    throw error;
+    throw new Error("Failed with fetching currencies");
   }
 };

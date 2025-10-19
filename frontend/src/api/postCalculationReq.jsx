@@ -18,7 +18,7 @@ export const postCalculationExchange = async (
     );
     return response.data;
   } catch (error) {
-    console.error('Error with response:', error);
-    throw error;
+      console.error('Error with response:', error);
+    throw new Error('Failed with calculation request. Check console for more info!');
   }
 };
